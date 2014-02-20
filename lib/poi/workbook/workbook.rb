@@ -64,6 +64,18 @@ module POI
         output.close
       end
     end
+
+    def write(io_or_stream)
+      if io_or_stream.kind_of?(java.io.OutputStream)
+        stream = io_or_stream
+      elsif io_or_stream.kind_of?(IO) || StringIO === io_or_stream || io_or_stream.respond_to?(:write)
+        stream = org.jruby.util.IOOutputStream.new io_or_stream
+      else
+        raise 'java.io.OutputStream or IO object expected'
+      end
+
+      @workbook.write(stream)
+    end
     
     def output_stream name
       java.io.FileOutputStream.new(name)
